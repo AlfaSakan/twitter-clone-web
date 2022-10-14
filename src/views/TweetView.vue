@@ -63,6 +63,5 @@ onMounted(() => {
   <div class="flex-1 overflow-y-scroll flex-col">
     <p v-if="!tweet?.content">Loading...</p>
     <TweetDetail v-else :tweet="tweet" @click-like="handleLikeRequest" />
-    <p>{{ user?.id }}</p>
   </div>
 </template>
