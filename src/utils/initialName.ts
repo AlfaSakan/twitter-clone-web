@@ -3,11 +3,11 @@ export function initialName(name: string) {
 
   const nameArr = name.split(" ");
 
-  let initial = "";
+  const firstLetter = nameArr[0][0].toUpperCase();
 
-  for (const nm of nameArr) {
-    initial += nm[0].toUpperCase();
-  }
+  if (nameArr.length === 1) return firstLetter;
 
-  return initial;
+  const secondLetter = nameArr[1][0].toUpperCase();
+
+  return firstLetter + secondLetter;
 }

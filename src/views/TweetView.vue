@@ -1,57 +1,42 @@
 <script setup lang="ts">
-import TweetDetail from "@/components/organisms/TweetDetail.vue";
 import type { Tweet } from "@/models/tweetModel";
-import type { User } from "@/models/userModel";
 import { getTweetApi, patchLikeTweetApi } from "@/services/tweetService";
-import { getUserRequestApi } from "@/services/userService";
+import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
+import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import TweetDetail from "../components/organisms/TweetDetail.vue";
 
 const route = useRoute();
 
 const userStore = useUserStore();
-const { getUser } = userStore;
+const { user } = storeToRefs(userStore);
+
+const { headersToken } = storeToRefs(useAuthStore());
 
 const tweet = ref({} as Tweet);
-const user = ref({} as User);
 
 const tweetRequestApi = async () => {
   try {
-    const response = await getTweetApi(route.params.id as string);
+    const response = await getTweetApi(
+      headersToken.value,
+      route.params.id as string
+    );
 
     if (!response.data) return;
 
     tweet.value = { ...response.data };
-
-    if (getUser.id === response.data.user_id) {
-      user.value = getUser;
-      return;
-    }
-
-    userRequestApi(tweet.value.user_id);
   } catch (error) {
     console.log("ERROR :", error);
   }
 };
 
-const userRequestApi = async (userId: string) => {
-  try {
-    const response = await getUserRequestApi(userId);
-
-    if (response.data) {
-      user.value = response.data;
-    }
-  } catch (error) {
-    console.log("ERROR : ", error);
-  }
-};
-
 const handleLikeRequest = async () => {
+  if (!user.value?.id) return;
   try {
-    const response = await patchLikeTweetApi({
+    const response = await patchLikeTweetApi(headersToken.value, {
       tweet_id: tweet.value.id,
-      user_id: user.value.id,
     });
 
     if (!response.data) throw new Error(response.message);
@@ -75,15 +60,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex-1">
-    <TweetDetail
-      :content="tweet.content"
-      :tweet-at="tweet.created_at"
-      :name="user.name"
-      :username="user.username"
-      :likes="tweet.likes"
-      :is-like="tweet.is_like"
-      @click-like="handleLikeRequest"
-    />
+  <div class="flex-1 overflow-y-scroll flex-col">
+    <p v-if="!tweet?.content">Loading...</p>
+    <TweetDetail v-else :tweet="tweet" @click-like="handleLikeRequest" />
+    <p>{{ user?.id }}</p>
   </div>
 </template>

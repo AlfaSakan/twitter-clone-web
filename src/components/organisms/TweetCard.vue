@@ -1,5 +1,11 @@
 <script setup lang="ts">
+import type { Tweet } from "@/models/tweetModel";
+import { patchLikeTweetApi } from "@/services/tweetService";
+import { useAuthStore } from "@/stores/authStore";
 import { convertDateToTime } from "@/utils/convertDate";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
 import PictureRoundLarge from "../atoms/PictureRoundLarge.vue";
 import IconComment from "../icons/IconComment.vue";
 import IconLike from "../icons/IconLike.vue";
@@ -8,38 +14,72 @@ import IconRetweet from "../icons/IconRetweet.vue";
 import IconShare from "../icons/IconShare.vue";
 
 export interface Props {
-  username: string;
-  name: string;
-  content: string;
-  tweetAt: number;
-  isLike: boolean;
-  onClickLike?(): void;
-  likes: number;
+  tweet: Tweet;
 }
 
-withDefaults(defineProps<Props>(), {
-  content: "",
-  name: "",
-  tweetAt: 0,
-  username: "",
-  isLike: false,
-  onClickLike: () => {},
-  likes: 0,
-});
+//#region REQUIRED
+const props = defineProps<Props>();
+
+const { headersToken } = storeToRefs(useAuthStore());
+
+const tweetRef = ref(props.tweet);
+
+const router = useRouter();
+//#endregion
+
+//#region REQUEST
+// LIKE REQUEST
+const handleLikeRequest = async () => {
+  try {
+    const response = await patchLikeTweetApi(headersToken.value, {
+      tweet_id: tweetRef.value.id,
+    });
+
+    if (!response.data) throw new Error(response.message);
+
+    const newIsLike = !tweetRef.value.is_like;
+    tweetRef.value.is_like = newIsLike;
+
+    if (newIsLike) {
+      tweetRef.value.likes++;
+      return;
+    }
+    tweetRef.value.likes--;
+  } catch (error) {
+    console.log("ERROR :", error);
+  }
+};
+//#endregion
+
+//#region HANDLER
+const handleClickPicture = () => {
+  router.push(`/${tweetRef.value.user_id}`);
+};
+
+const handleNavigateTweet = () => {
+  router.push(`tweet/${tweetRef.value.id}`);
+};
+//#endregion
 </script>
 
 <template>
-  <div class="border-b px-4 py-3 w-screen gap-2">
-    <div>
-      <PictureRoundLarge text="AAS" />
-    </div>
+  <div
+    class="border-b px-4 py-3 w-screen gap-2 cursor-pointer"
+    type="button"
+    @click="handleNavigateTweet"
+  >
+    <button @click.stop="handleClickPicture">
+      <PictureRoundLarge :text="tweet.User.name" />
+    </button>
     <div class="flex-col w-full">
       <div class="items-center gap-1">
-        <p class="text-base font-bold">{{ name }}</p>
-        <p class="text-sm text-slate-500">@{{ username }}</p>
-        <p class="text-sm text-slate-500">{{ convertDateToTime(tweetAt) }}</p>
+        <p class="text-base font-bold">{{ tweet.User.name }}</p>
+        <p class="text-sm text-slate-500">@{{ tweet.User.username }}</p>
+        <p class="text-sm text-slate-500">
+          {{ convertDateToTime(tweet.created_at) }}
+        </p>
       </div>
-      <p class="text-sm">{{ content }}</p>
+      <p class="text-sm">{{ tweet.content }}</p>
       <div class="items-center justify-between pr-10 pt-2">
         <div class="items-center gap-1">
           <IconComment class="w-4" />
@@ -51,12 +91,16 @@ withDefaults(defineProps<Props>(), {
         </div>
         <div class="items-center gap-1">
           <IconLikeFill
-            v-if="isLike"
-            class="w-4 fill-red-400"
-            @click="onClickLike"
+            v-if="tweet.is_like"
+            class="w-4 fill-red-400 cursor-pointer"
+            @click.stop="handleLikeRequest"
           />
-          <IconLike v-else class="w-4" @click="onClickLike" />
-          <p class="text-xs">{{ likes }}</p>
+          <IconLike
+            v-else
+            class="w-4 cursor-pointer"
+            @click.stop="handleLikeRequest"
+          />
+          <p class="text-xs">{{ tweet.likes }}</p>
         </div>
         <IconShare class="w-4" />
       </div>

@@ -1,31 +1,45 @@
 <script setup lang="ts">
 import PictureRounded from "@/components/atoms/PictureRounded.vue";
-import { useUserStore } from "@/stores/userStore";
-import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
+import ButtonSmallOutline from "../atoms/ButtonSmallOutline.vue";
 import IconTwitter from "../icons/IconTwitter.vue";
 
-const userStore = useUserStore();
+export interface Props {
+  name?: string;
+  id?: string;
+  onLogout(): void;
+  onLogin(): void;
+}
 
-const { getUser } = userStore;
+const props = withDefaults(defineProps<Props>(), {
+  name: "Empty",
+  id: "",
+  onLogin: () => {},
+  onLogout: () => {},
+});
 
-const userName = ref("");
+//#region REQUIRED
+const router = useRouter();
+//#endregion
 
-console.log({ getUser });
-watch(
-  getUser,
-  (prev, next) => {
-    userName.value = getUser.name;
-  },
-  { deep: true }
-);
+//#region HANDLER
+const handleNavigateUser = () => {
+  router.push(`/${props.id}`);
+};
+//#endregion
 </script>
 
 <template>
   <header class="flex p-3 border-b justify-between">
-    <PictureRounded :text="getUser.name" />
-    <RouterLink to="/">
+    <div class="flex-1 cursor-pointer" @click="handleNavigateUser">
+      <PictureRounded :text="name" />
+    </div>
+    <RouterLink to="/" class="flex flex-1 justify-center">
       <IconTwitter class="w-8 fill-blue-400" />
     </RouterLink>
-    <PictureRounded text="ASU" />
+    <div class="flex-1 justify-end">
+      <ButtonSmallOutline v-if="id" text="Logout" @click="onLogout" />
+      <ButtonSmallOutline v-else text="Login" @click="onLogin" />
+    </div>
   </header>
 </template>

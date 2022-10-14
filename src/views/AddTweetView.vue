@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import ButtonSmall from "@/components/atoms/ButtonSmall.vue";
 import IconClose from "@/components/icons/IconClose.vue";
-import type { Response } from "@/models/responseModel";
-import type { Tweet } from "@/models/tweetModel";
+import { postTweetApi } from "@/services/tweetService";
+import { useUserStore } from "@/stores/userStore";
+import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import ButtonSmallOutline from "../components/atoms/ButtonSmallOutline.vue";
@@ -10,25 +11,26 @@ import PictureRoundLarge from "../components/atoms/PictureRoundLarge.vue";
 import TextInput from "../components/atoms/TextInput.vue";
 import IconChevronDown from "../components/icons/IconChevronDown.vue";
 
-const tweet = ref<Tweet>();
 const router = useRouter();
+
+const { user } = storeToRefs(useUserStore());
+
 const inputTweet = ref("");
 
 const createTweetRequest = async () => {
   try {
-    const request = await fetch("http://localhost:8081/v1/tweet", {
-      method: "POST",
-      body: JSON.stringify({
-        content: inputTweet.value,
-        user_id: "29861cae-f5fb-4c6e-89be-4307038cd914",
-      }),
-    });
-    const response: Response<Tweet> = await request.json();
+    if (!user.value?.id) return;
 
-    if (response.data) {
-      tweet.value = response.data;
-      router.push("/");
-    }
+    const body = {
+      content: inputTweet.value,
+      user_id: user.value?.id,
+    };
+
+    const response = await postTweetApi(body);
+
+    if (!response.data) return;
+
+    router.push("/");
   } catch (error) {
     console.log("ERROR :", error);
   }
@@ -44,7 +46,7 @@ const createTweetRequest = async () => {
       <ButtonSmall @click="createTweetRequest" text="Tweet" />
     </div>
     <div class="gap-2 py-2 px-4">
-      <PictureRoundLarge text="ASS" />
+      <PictureRoundLarge :text="user?.name || 'Empty'" />
       <ButtonSmallOutline text="Public">
         <template #icon>
           <IconChevronDown class="w-5 fill-blue-500" />

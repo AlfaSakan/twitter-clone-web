@@ -1,30 +1,45 @@
 <script setup lang="ts">
-import { RouterView } from "vue-router";
+import { storeToRefs } from "pinia";
+import { watch } from "vue";
+import { RouterView, useRouter } from "vue-router";
 import FooterLayout from "./components/layouts/FooterLayout.vue";
 import PrimaryLayout from "./components/layouts/PrimaryLayout.vue";
+import { useAuthStore } from "./stores/authStore";
+import { useUserStore } from "./stores/userStore";
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+
+const authStore = useAuthStore();
+const { accessToken } = storeToRefs(authStore);
+
+const router = useRouter();
+
+//#region HANDLER
+const handleLogout = () => {
+  userStore.resetUser();
+  authStore.resetAuth();
+};
+
+const handleLogin = () => {
+  router.push("/login");
+};
+//#endregion
+
+watch(accessToken, (val) => {
+  if (!val) {
+    router.push("/login");
+  }
+});
 </script>
 
 <template>
-  <!-- <header>
-    <img
-      alt="Vue logo"
-      class="logo"
-      src="@/assets/logo.svg"
-      width="125"
-      height="125"
-    />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header> -->
-
-  <PrimaryLayout />
+  <PrimaryLayout
+    :name="user?.name"
+    :id="user?.id"
+    @logout="handleLogout"
+    @login="handleLogin"
+  />
   <RouterView />
   <FooterLayout />
 </template>

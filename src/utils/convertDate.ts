@@ -74,3 +74,17 @@ export const convertDateToTimeDate = (date: Date | number) => {
 
   return `${hours}:${minutes} · ${dateNum} ${months} ${years}`;
 };
+
+export const convertTimeToMonthYear = (date: Date | number) => {
+  let dateValue;
+  if (typeof date === "number") {
+    dateValue = new Date(date);
+  } else {
+    dateValue = date;
+  }
+
+  const months = MONTHS[dateValue.getMonth()];
+  const years = dateValue.getFullYear();
+
+  return `${months} ${years}`;
+};

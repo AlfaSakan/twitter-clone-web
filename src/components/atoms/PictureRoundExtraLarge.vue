@@ -8,7 +8,7 @@ defineProps<{
 
 <template>
   <div
-    class="rounded-full border w-10 h-10 items-center justify-center overflow-hidden"
+    class="rounded-full border w-32 h-32 items-center justify-center overflow-hidden"
   >
     <p>{{ initialName(text) }}</p>
   </div>

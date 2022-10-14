@@ -20,12 +20,27 @@ const router = createRouter({
     {
       path: "/add-tweet",
       name: "add tweet",
-      component: () => import("../views/AddTweet.vue"),
+      component: () => import("../views/AddTweetView.vue"),
     },
     {
       path: "/tweet/:id",
       name: "tweet",
       component: () => import("../views/TweetView.vue"),
+    },
+    {
+      path: "/:id",
+      name: "profile",
+      component: () => import("../views/ProfileView.vue"),
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: () => import("../views/LoginView.vue"),
+    },
+    {
+      path: "/register",
+      name: "register",
+      component: () => import("../views/SignUpView.vue"),
     },
   ],
 });

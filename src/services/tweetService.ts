@@ -1,18 +1,33 @@
 import { env } from "@/contants/env";
 import { Methods } from "@/contants/requestMethod";
 import type { Response } from "@/models/responseModel";
-import type { TweetLike } from "@/models/tweetLikeModel";
+import type { Token } from "@/models/sessionModel";
 import type { Tweet } from "@/models/tweetModel";
+import { authorizationHeader } from "./authService";
 
 const { apiBaseUrl, apiVersion } = env;
 
-type PostLikeSchema = { tweet_id: string; user_id: string };
+type PostLikeSchema = { tweet_id: string };
+type PostTweetSchema = { content: string; user_id: string };
 
-export const getListTweetsApi = async (user_id: string) => {
+const tweetUrl = `${apiBaseUrl}${apiVersion}/tweet`;
+
+export const getAllTweetsApi = async (headers?: Token) => {
+  const request = await fetch(`${tweetUrl}s`, {
+    method: Methods.GET,
+    headers: headers ? authorizationHeader(headers) : undefined,
+  });
+  const response: Response<Tweet[]> = await request.json();
+
+  return response;
+};
+
+export const getListTweetsApi = async (headers: Token, user_id: string) => {
   const body = { user_id };
 
-  const request = await fetch(`${apiBaseUrl}${apiVersion}/tweets`, {
+  const request = await fetch(`${tweetUrl}s`, {
     method: Methods.POST,
+    headers: authorizationHeader(headers),
     body: JSON.stringify(body),
   });
   const response: Response<Tweet[]> = await request.json();
@@ -20,9 +35,10 @@ export const getListTweetsApi = async (user_id: string) => {
   return response;
 };
 
-export const getTweetApi = async (tweetId: string) => {
-  const request = await fetch(`${apiBaseUrl}${apiVersion}/tweet/${tweetId}`, {
+export const getTweetApi = async (headers: Token, tweetId: string) => {
+  const request = await fetch(`${tweetUrl}/${tweetId}`, {
     method: Methods.GET,
+    headers: authorizationHeader(headers),
   });
 
   const response: Response<Tweet> = await request.json();
@@ -30,24 +46,28 @@ export const getTweetApi = async (tweetId: string) => {
   return response;
 };
 
-export const patchLikeTweetApi = async (body: PostLikeSchema) => {
-  const request = await fetch(`${apiBaseUrl}${apiVersion}/tweet/like`, {
-    method: Methods.PATCH,
-    body: JSON.stringify(body),
-  });
-
-  const response: Response<string> = await request.json();
-
-  return response;
-};
-
-export const postLikeTweetApi = async (body: PostLikeSchema) => {
-  const request = await fetch(`${apiBaseUrl}${apiVersion}/tweet/like`, {
+export const postTweetApi = async (body: PostTweetSchema) => {
+  const request = await fetch(`${tweetUrl}`, {
     method: Methods.POST,
     body: JSON.stringify(body),
   });
 
-  const response: Response<TweetLike> = await request.json();
+  const response: Response<Tweet> = await request.json();
+
+  return response;
+};
+
+export const patchLikeTweetApi = async (
+  headers: Token,
+  body: PostLikeSchema
+) => {
+  const request = await fetch(`${tweetUrl}/like`, {
+    method: Methods.PATCH,
+    headers: authorizationHeader(headers),
+    body: JSON.stringify(body),
+  });
+
+  const response: Response<string> = await request.json();
 
   return response;
 };

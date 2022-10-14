@@ -1,3 +1,5 @@
+import type { User } from "./userModel";
+
 export interface Tweet {
   id: string;
   content: string;
@@ -5,4 +7,5 @@ export interface Tweet {
   likes: number;
   created_at: number;
   is_like?: boolean;
+  User: User;
 }
