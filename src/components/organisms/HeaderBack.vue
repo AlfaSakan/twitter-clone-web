@@ -9,21 +9,24 @@ export interface Props {
 
 withDefaults(defineProps<Props>(), {
   onBackPress: () => {},
-  name: "default name",
-  totalTweets: 100,
+  name: "",
+  totalTweets: 0,
 });
 </script>
 
 <template>
-  <div class="items-center border-b py-1 px-3">
+  <div class="items-center border-b h-15 py-1 px-3">
     <button @click="onBackPress">
       <IconChevronLeft class="w-6" />
     </button>
-    <div class="flex-col self-start ml-3 gap-1">
+    <div class="flex-col ml-3 gap-1" v-if="name">
       <p class="text-xl font-bold">{{ name }}</p>
       <p class="text-slate-500 text-sm">{{ totalTweets }} Tweets</p>
     </div>
-    <div class="ml-auto">
+    <div class="flex-col ml-3 gap-1" v-else>
+      <p class="text-xl font-semibold">Tweet</p>
+    </div>
+    <div class="ml-auto" v-if="name">
       <IconSearch class="w-6" />
     </div>
   </div>

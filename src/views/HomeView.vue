@@ -35,11 +35,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="flex-1 flex flex-col overflow-y-scroll relative">
+  <main
+    class="flex-1 flex flex-col overflow-y-scroll relative md:overflow-visible"
+  >
     <div class="flex-col">
       <TweetCard :tweet="tweet" v-for="tweet in tweetsList" :key="tweet.id" />
     </div>
-    <RouterLink v-if="user?.id" to="/add-tweet" class="fixed bottom-18 right-5">
+    <RouterLink
+      v-if="user?.id"
+      to="/add-tweet"
+      class="fixed bottom-18 right-5"
+      data-cy="btn-add-tweet"
+    >
       <div class="rounded-full p-3 bg-blue-400">
         <IconAddTweet class="w-6 fill-white" />
       </div>

@@ -22,6 +22,8 @@ const formLogin = reactive({
   password: "",
 });
 
+//#region REQUEST API
+// LOGIN
 const handleSubmitLogin = async () => {
   try {
     const response = await loginRequestApi(formLogin);
@@ -34,6 +36,7 @@ const handleSubmitLogin = async () => {
   }
 };
 
+// USER
 const userRequestApi = async () => {
   try {
     const response = await getUserMeRequestApi(headersToken.value);
@@ -49,7 +52,9 @@ const userRequestApi = async () => {
     router.push("/login");
   }
 };
+//#endregion
 
+//#region WATCH
 watch(accessToken, (val) => {
   if (val) {
     userRequestApi();
@@ -61,6 +66,7 @@ watch(user, (val) => {
     router.push("/");
   }
 });
+//#endregion
 </script>
 
 <template>
@@ -75,7 +81,11 @@ watch(user, (val) => {
       type="password"
       v-model="formLogin.password"
     />
-    <ButtonLarge text="Login" @click="handleSubmitLogin" />
+    <ButtonLarge
+      data-cy="btn-submit-login"
+      text="Login"
+      @click="handleSubmitLogin"
+    />
     <RouterLink to="/register" class="w-full items-center justify-center flex">
       <a class="font-medium text-blue-400 text-sm">Register</a>
     </RouterLink>

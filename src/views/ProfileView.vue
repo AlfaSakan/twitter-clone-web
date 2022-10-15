@@ -12,7 +12,7 @@ import ButtonSmallOutline from "../components/atoms/ButtonSmallOutline.vue";
 import PictureRoundExtraLarge from "../components/atoms/PictureRoundExtraLarge.vue";
 import TextIcon from "../components/atoms/TextIcon.vue";
 import IconCalendar from "../components/icons/IconCalendar.vue";
-import HeaderProfile from "../components/organisms/HeaderProfile.vue";
+import HeaderBack from "../components/organisms/HeaderBack.vue";
 import TweetCard from "../components/organisms/TweetCard.vue";
 
 const navbars = ["Tweets", "Tweets & replies", "Media", "Likes"];
@@ -33,7 +33,6 @@ const handleNavbar = (index: number) => {
 const handleNavigateBack = () => {
   router.back();
 };
-
 //#endregion
 
 //#region Request Api
@@ -75,7 +74,7 @@ onMounted(() => {
 
 <template>
   <main class="flex-1 flex-col flex overflow-y-scroll">
-    <HeaderProfile
+    <HeaderBack
       v-on:back-press="handleNavigateBack"
       :name="user.name"
       :total-tweets="1000"

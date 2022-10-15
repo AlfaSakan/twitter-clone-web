@@ -31,6 +31,7 @@ const router = useRouter();
 // LIKE REQUEST
 const handleLikeRequest = async () => {
   try {
+    if (!headersToken.value.access_token) return;
     const response = await patchLikeTweetApi(headersToken.value, {
       tweet_id: tweetRef.value.id,
     });
@@ -64,7 +65,7 @@ const handleNavigateTweet = () => {
 
 <template>
   <div
-    class="border-b px-4 py-3 w-screen gap-2 cursor-pointer"
+    class="border-b px-4 py-3 w-screen gap-2 cursor-pointer md:w-full"
     type="button"
     @click="handleNavigateTweet"
   >

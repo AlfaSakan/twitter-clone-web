@@ -11,12 +11,15 @@ import PictureRoundLarge from "../components/atoms/PictureRoundLarge.vue";
 import TextInput from "../components/atoms/TextInput.vue";
 import IconChevronDown from "../components/icons/IconChevronDown.vue";
 
+//#region REQUIRED
 const router = useRouter();
 
 const { user } = storeToRefs(useUserStore());
 
 const inputTweet = ref("");
+//#endregion
 
+//#region REQUEST
 const createTweetRequest = async () => {
   try {
     if (!user.value?.id) return;
@@ -35,6 +38,7 @@ const createTweetRequest = async () => {
     console.log("ERROR :", error);
   }
 };
+//#endregion
 </script>
 
 <template>

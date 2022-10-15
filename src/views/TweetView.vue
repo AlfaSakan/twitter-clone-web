@@ -1,22 +1,21 @@
 <script setup lang="ts">
 import type { Tweet } from "@/models/tweetModel";
-import { getTweetApi, patchLikeTweetApi } from "@/services/tweetService";
+import { getTweetApi } from "@/services/tweetService";
 import { useAuthStore } from "@/stores/authStore";
-import { useUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import HeaderBack from "../components/organisms/HeaderBack.vue";
 import TweetDetail from "../components/organisms/TweetDetail.vue";
 
 const route = useRoute();
-
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
+const router = useRouter();
 
 const { headersToken } = storeToRefs(useAuthStore());
 
 const tweet = ref({} as Tweet);
 
+//#region REQUEST API
 const tweetRequestApi = async () => {
   try {
     const response = await getTweetApi(
@@ -31,28 +30,13 @@ const tweetRequestApi = async () => {
     console.log("ERROR :", error);
   }
 };
+//#endregion
 
-const handleLikeRequest = async () => {
-  if (!user.value?.id) return;
-  try {
-    const response = await patchLikeTweetApi(headersToken.value, {
-      tweet_id: tweet.value.id,
-    });
-
-    if (!response.data) throw new Error(response.message);
-
-    const newIsLike = !tweet.value.is_like;
-    tweet.value.is_like = newIsLike;
-
-    if (newIsLike) {
-      tweet.value.likes++;
-      return;
-    }
-    tweet.value.likes--;
-  } catch (error) {
-    console.log("ERROR :", error);
-  }
+//#region Handler
+const handleNavigateBack = () => {
+  router.back();
 };
+//#endregion
 
 onMounted(() => {
   tweetRequestApi();
@@ -61,7 +45,8 @@ onMounted(() => {
 
 <template>
   <div class="flex-1 overflow-y-scroll flex-col">
+    <HeaderBack v-on:back-press="handleNavigateBack" />
     <p v-if="!tweet?.content">Loading...</p>
-    <TweetDetail v-else :tweet="tweet" @click-like="handleLikeRequest" />
+    <TweetDetail v-else :tweet="tweet" />
   </div>
 </template>

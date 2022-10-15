@@ -5,7 +5,7 @@ defineProps<{ text: string }>();
 <template>
   <button
     type="button"
-    class="bg-blue-500 font-bold py-1 px-4 flex items-center justify-center rounded-full text-white"
+    class="bg-blue-500 font-bold py-1 px-4 flex items-center justify-center rounded-full text-white hover:bg-blue-600 transition-colors duration-300"
   >
     {{ text }}
   </button>
