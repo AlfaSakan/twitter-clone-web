@@ -42,6 +42,16 @@ const router = createRouter({
       name: "register",
       component: () => import("../views/SignUpView.vue"),
     },
+    {
+      path: "/reply/:id",
+      name: "reply",
+      component: () => import("../views/ReplyView.vue"),
+    },
+    {
+      path: "/retweet/:id",
+      name: "add-retweet",
+      component: () => import("../views/RetweetView.vue"),
+    },
   ],
 });
 

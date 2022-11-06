@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { initialName } from "@/utils/initialName";
 
-defineProps<{
-  text: string;
-}>();
+withDefaults(
+  defineProps<{
+    text?: string;
+  }>(),
+  {
+    text: "Empty",
+  }
+);
 </script>
 
 <template>

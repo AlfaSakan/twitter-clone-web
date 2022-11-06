@@ -2,12 +2,11 @@
 import ButtonSmall from "@/components/atoms/ButtonSmall.vue";
 import IconClose from "@/components/icons/IconClose.vue";
 import { TWEET_TYPE } from "@/models/tweetModel";
-import { postTweetApi } from "@/services/tweetService";
-import { useAuthStore } from "@/stores/authStore";
+import { postReplyApi } from "@/services/replyService";
 import { useUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import ButtonSmallOutline from "../components/atoms/ButtonSmallOutline.vue";
 import PictureRoundLarge from "../components/atoms/PictureRoundLarge.vue";
 import TextInput from "../components/atoms/TextInput.vue";
@@ -15,24 +14,26 @@ import IconChevronDown from "../components/icons/IconChevronDown.vue";
 
 //#region REQUIRED
 const router = useRouter();
+const route = useRoute();
 
 const { user } = storeToRefs(useUserStore());
-const { headersToken } = storeToRefs(useAuthStore());
 
 const inputTweet = ref("");
 //#endregion
 
 //#region REQUEST
-const createTweetRequest = async () => {
+const createReplyRequest = async () => {
   try {
-    if (!inputTweet.value) return;
+    if (!user.value?.id) return;
 
     const body = {
       content: inputTweet.value,
-      type_id: TWEET_TYPE.tweet,
+      user_id: user.value?.id,
+      type_id: TWEET_TYPE.reply,
+      tweet_id: route.params.id as string,
     };
 
-    const response = await postTweetApi(headersToken.value, body);
+    const response = await postReplyApi(body);
 
     if (!response.data) return;
 
@@ -51,7 +52,7 @@ const createTweetRequest = async () => {
         <IconClose class="w-6" />
       </RouterLink>
       <ButtonSmall
-        @click="createTweetRequest"
+        @click="createReplyRequest"
         text="Tweet"
         data-cy="btn-post-tweet"
       />

@@ -15,7 +15,9 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div class="items-center border-b h-15 py-1 px-3">
+  <div
+    class="items-center border-b h-15 py-3 px-3 backdrop-blur-sm bg-white bg-opacity-90"
+  >
     <button @click="onBackPress">
       <IconChevronLeft class="w-6" />
     </button>

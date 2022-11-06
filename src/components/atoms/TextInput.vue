@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 
-defineProps<{ placeholder: string }>();
+export interface Props {
+  placeholder?: string;
+  isFocus?: boolean;
+}
 
-const inputRef = ref();
+const props = withDefaults(defineProps<Props>(), {
+  placeholder: "",
+  isFocus: false,
+});
+
+const inputRef = ref<HTMLTextAreaElement | null>();
 const input = ref("");
 
 onMounted(() => {
-  inputRef.value.focus();
+  if (props.isFocus) {
+    inputRef.value?.focus();
+  }
 });
 </script>
 

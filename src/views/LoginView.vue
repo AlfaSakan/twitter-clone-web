@@ -1,13 +1,20 @@
 <script setup lang="ts">
+import type { Response } from "@/models/responseModel";
 import { loginRequestApi } from "@/services/authService";
 import { getUserMeRequestApi } from "@/services/userService";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
+import { checkingObjectForm, validateEmpty } from "@/utils/validateForm";
 import { storeToRefs } from "pinia";
 import { reactive, watch } from "vue";
 import { useRouter } from "vue-router";
 import ButtonLarge from "../components/atoms/ButtonLarge.vue";
 import TextInputBorder from "../components/atoms/TextInputBorder.vue";
+
+interface LoginForm {
+  username: string;
+  password: string;
+}
 
 const userStore = useUserStore();
 const { user } = storeToRefs(userStore);
@@ -17,22 +24,52 @@ const { headersToken, accessToken } = storeToRefs(authStore);
 
 const router = useRouter();
 
+//#region FROM
 const formLogin = reactive({
   username: "",
   password: "",
 });
 
+const formLoginError = reactive<LoginForm>({
+  username: "",
+  password: "",
+});
+
+const validateForm = () => {
+  let isNotError = true;
+
+  checkingObjectForm(formLogin, (key, value) => {
+    const errorText = validateEmpty(key, value);
+    formLoginError[key as keyof LoginForm] = errorText;
+    if (errorText) {
+      isNotError = false;
+    }
+  });
+
+  return isNotError;
+};
+//#endregion
+
 //#region REQUEST API
 // LOGIN
 const handleSubmitLogin = async () => {
   try {
+    if (!validateForm()) return;
+
     const response = await loginRequestApi(formLogin);
 
-    if (!response.data) return;
+    if (!response.data) throw response;
 
     authStore.addAuth(response.data);
   } catch (error) {
-    console.log("ERROR :", error);
+    console.error("ERROR :", error);
+    if (
+      (error as Response<string>).message.toLowerCase().includes("username")
+    ) {
+      formLoginError.username = "Username tidak ditemukan";
+      return;
+    }
+    formLoginError.password = "Password Salah";
   }
 };
 
@@ -66,22 +103,34 @@ watch(user, (val) => {
     router.push("/");
   }
 });
+
+watch(formLogin, (val) => {
+  if (val.username) {
+    formLoginError.username = "";
+  }
+  if (val.password) {
+    formLoginError.password = "";
+  }
+});
 //#endregion
 </script>
 
 <template>
-  <main class="flex-1 p-4 flex-col gap-4 flex">
+  <main class="flex-1 p-4 flex-col gap-2 flex">
     <TextInputBorder
-      placeholder="username"
+      placeholder="Username"
       type="text"
       v-model="formLogin.username"
+      :error="formLoginError.username"
     />
     <TextInputBorder
-      placeholder="password"
+      placeholder="Password"
       type="password"
       v-model="formLogin.password"
+      :error="formLoginError.password"
     />
     <ButtonLarge
+      class="mt-5"
       data-cy="btn-submit-login"
       text="Login"
       @click="handleSubmitLogin"

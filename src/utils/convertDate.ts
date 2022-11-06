@@ -1,4 +1,4 @@
-import { zeroPad } from "./padStart";
+import { zeroPad } from "./formatNumber";
 
 const MONTHS = [
   "Januari",
@@ -15,7 +15,7 @@ const MONTHS = [
   "Desember",
 ];
 
-export const convertDateToTime = (date: Date | number) => {
+export const convertDateToTime = (date: Date | number | undefined) => {
   if (!date) return "";
 
   const now = new Date().getTime();

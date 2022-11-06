@@ -37,9 +37,11 @@ watch(accessToken, (val) => {
   <PrimaryLayout
     :name="user?.name"
     :id="user?.id"
+    :username="user?.username"
     @logout="handleLogout"
     @login="handleLogin"
+    v-if="router.currentRoute.value.name !== 'login'"
   />
   <RouterView />
-  <FooterLayout />
+  <FooterLayout v-if="router.currentRoute.value.name !== 'login'" />
 </template>

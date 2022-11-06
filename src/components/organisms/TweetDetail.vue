@@ -80,7 +80,7 @@ const handleLikeRequest = async () => {
       </p>
     </div>
     <div class="gap-2 py-3 pl-4 border-b">
-      <TextSpan :num="37" text="Retweets" />
+      <TextSpan :num="tweet.reply_counts" text="Retweets" />
       <TextSpan :num="2" text="Quote Tweets" />
       <TextSpan :num="tweet.likes" text="Likes" />
     </div>
