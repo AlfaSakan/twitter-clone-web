@@ -24,7 +24,9 @@ export interface Props {
 }
 
 //#region REQUIRED
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  replyingTo: "",
+});
 
 const { userId } = storeToRefs(useUserStore());
 const { headersToken } = storeToRefs(useAuthStore());
@@ -106,6 +108,18 @@ const handleNavigateAddRetweet = () => {
   router.push(`retweet/${checkIsContenEmpty("id")()}`);
 };
 
+const handleClickRetweet = (referenceId?: string) => {
+  if (!referenceId) return;
+
+  router.push(`/tweet/${referenceId}`);
+};
+
+const handleClickPictureRetweet = (userId?: string) => {
+  if (!userId) return;
+
+  router.push(`/${userId}`);
+};
+
 const checkIsContenEmpty = (key1: keyof Tweet) => (key2?: keyof User) => {
   if (!key2 && isContentEmpty.value) {
     return retweetRef.value?.[key1];
@@ -169,7 +183,12 @@ onMounted(() => {
         <p class="text-sm">
           {{ checkIsContenEmpty("content")() }}
         </p>
-        <RetweetCard v-if="retweetRef && !isContentEmpty" :tweet="retweetRef" />
+        <RetweetCard
+          v-if="retweetRef && !isContentEmpty"
+          :tweet="retweetRef"
+          v-on:click-card="handleClickRetweet(tweet.reference_id)"
+          v-on:click-picture="handleClickPictureRetweet(retweetRef?.user_id)"
+        />
         <div class="items-center justify-between pr-10 pt-2">
           <div
             class="items-center gap-1 cursor-pointer"

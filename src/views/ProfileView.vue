@@ -7,17 +7,14 @@ import {
 } from "@/services/tweetService";
 import { getUserRequestApi } from "@/services/userService";
 import { useAuthStore } from "@/stores/authStore";
-import { convertTimeToMonthYear } from "@/utils/convertDate";
 import { storeToRefs } from "pinia";
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import ButtonSmallOutline from "../components/atoms/ButtonSmallOutline.vue";
-import PictureRoundExtraLarge from "../components/atoms/PictureRoundExtraLarge.vue";
-import TextIcon from "../components/atoms/TextIcon.vue";
-import IconCalendar from "../components/icons/IconCalendar.vue";
 import HeaderBack from "../components/organisms/HeaderBack.vue";
 import TweetCard from "../components/organisms/TweetCard.vue";
+import HeaderProfile from "@/components/organisms/HeaderProfile.vue";
 
+//#region REQUIRED
 const navbars = ["Tweets", "Retweets & replies", "Media", "Likes"];
 
 const route = useRoute();
@@ -29,6 +26,7 @@ const tweets = ref<Tweet[]>([]);
 const { headersToken } = storeToRefs(useAuthStore());
 
 const userId = ref(route.params.id as string);
+//#endregion
 
 //#region Handler
 const handleNavbar = (index: number) => {
@@ -57,6 +55,7 @@ const getUser = async () => {
 // GET TWEET
 const getTweet = async () => {
   try {
+    tweets.value = [];
     const response = await getListTweetsApi(headersToken.value, userId.value);
 
     if (!response.data) return;
@@ -70,7 +69,8 @@ const getTweet = async () => {
 // GET TWEET LIKED
 const getTweetLiked = async () => {
   try {
-    const response = await getListTweetLikedApi(userId.value);
+    tweets.value = [];
+    const response = await getListTweetLikedApi(headersToken.value);
 
     if (!response.data) return;
 
@@ -81,11 +81,14 @@ const getTweetLiked = async () => {
 };
 //#endregion
 
+//#region ONMOUNTED
 onMounted(() => {
   getUser();
   getTweet();
 });
+//#endregion
 
+//#region WATCH
 watch(navbarActive, (val) => {
   switch (val) {
     case 0:
@@ -99,6 +102,7 @@ watch(navbarActive, (val) => {
       break;
   }
 });
+//#endregion
 </script>
 
 <template>
@@ -111,35 +115,7 @@ watch(navbarActive, (val) => {
       :total-tweets="1000"
       class="md:fixed md:z-10 md:w-[41.5%]"
     />
-    <div class="flex-col relative mb-3 md:pt-15">
-      <div class="bg-slate-300 h-48" />
-      <div class="bg-white h-48 px-3">
-        <div class="flex-col mt-18">
-          <p class="text-xl font-bold">{{ user.name }}</p>
-          <p class="text-slate-500 text-sm">@{{ user.username }}</p>
-          <TextIcon
-            :text="`Joined ${convertTimeToMonthYear(user.created_at || 0)}`"
-            class="mt-3"
-          >
-            <template #icon>
-              <IconCalendar class="w-5 fill-slate-500" />
-            </template>
-          </TextIcon>
-          <div class="gap-4 text-slate-500 text-sm mt-3">
-            <p><span class="font-bold text-black">100</span> Following</p>
-            <p><span class="font-bold text-black">100</span> Followers</p>
-          </div>
-        </div>
-        <ButtonSmallOutline
-          text="Edit Profile"
-          class="border-slate-400 text-black h-10 ml-auto mt-3"
-        />
-      </div>
-      <PictureRoundExtraLarge
-        :text="user.name"
-        class="bg-black text-white border-4 border-white absolute top-32 md:top-48 left-3"
-      />
-    </div>
+    <HeaderProfile :user="user" />
     <div class="border-b">
       <button
         v-for="(navbar, index) in navbars"

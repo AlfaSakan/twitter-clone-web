@@ -10,6 +10,7 @@ import HeaderBack from "../components/organisms/HeaderBack.vue";
 import TweetCard from "../components/organisms/TweetCard.vue";
 import TweetDetail from "../components/organisms/TweetDetail.vue";
 
+//#region REQUIRED
 const route = useRoute();
 const router = useRouter();
 
@@ -18,21 +19,30 @@ const { headersToken } = storeToRefs(useAuthStore());
 const tweet = ref({} as Tweet);
 const tweetId = ref(route.params.id as string);
 const replies = ref<Tweet[]>([]);
+const retweetRef = ref<Tweet>();
+
+const isLoading = ref(false);
+//#endregion
 
 //#region REQUEST API
 const tweetRequestApi = async () => {
   try {
+    isLoading.value = true;
     const response = await getTweetApi(headersToken.value, tweetId.value);
 
     if (!response.data) return;
 
-    repliesRequestApi();
-    tweet.value = { ...response.data };
+    await getReferenceTweetRequest(response.data.reference_id);
+    await repliesRequestApi();
+    tweet.value = response.data;
   } catch (error) {
     console.log("ERROR :", error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
+// REPLY
 const repliesRequestApi = async () => {
   try {
     const response = await getRepliesApi(headersToken.value, tweetId.value);
@@ -44,11 +54,37 @@ const repliesRequestApi = async () => {
     console.log("ERROR :", error);
   }
 };
+
+// RETWEET
+const getReferenceTweetRequest = async (reference_id: string) => {
+  try {
+    if (!reference_id) {
+      retweetRef.value = undefined;
+      return;
+    }
+
+    const response = await getTweetApi(headersToken.value, reference_id);
+
+    if (!response.data) throw response;
+
+    retweetRef.value = response.data;
+  } catch (error) {
+    console.log("ERROR :", error);
+  }
+};
 //#endregion
 
-//#region Handler
+//#region HANDLER
 const handleNavigateBack = () => {
   router.back();
+};
+
+const handleClickRetweet = (referenceId: string) => {
+  router.push(`/tweet/${referenceId}`);
+};
+
+const handleClickPictureRetweet = (userId?: string) => {
+  router.push(`/${userId}`);
 };
 //#endregion
 
@@ -75,7 +111,16 @@ watch(route, (val) => {
       class="md:w-[41.5%] md:fixed"
     />
     <p v-if="!tweet?.content">Loading...</p>
-    <TweetDetail v-else :tweet="tweet" class="md:pt-15" />
+    <TweetDetail
+      v-else
+      :tweet="tweet"
+      class="md:pt-15"
+      :retweet="retweetRef"
+      v-on:click-card="handleClickRetweet(tweet.reference_id)"
+      v-on:click-picture-retweet="
+        handleClickPictureRetweet(retweetRef?.user_id)
+      "
+    />
     <div v-if="replies.length > 0" class="flex-col">
       <TweetCard
         v-for="reply in replies"

@@ -13,10 +13,14 @@ import IconLike from "../icons/IconLike.vue";
 import IconLikeFill from "../icons/IconLikeFill.vue";
 import IconRetweet from "../icons/IconRetweet.vue";
 import IconShare from "../icons/IconShare.vue";
+import RetweetCard from "./RetweetCard.vue";
 
 //#region PROPS
 export interface Props {
   tweet: Tweet;
+  retweet?: Tweet;
+  onClickCard?: () => void;
+  onClickPictureRetweet?: () => void;
 }
 
 const props = defineProps<Props>();
@@ -75,13 +79,19 @@ const handleLikeRequest = async () => {
         </div>
       </div>
       <p class="text-lg">{{ tweet.content }}</p>
+      <RetweetCard
+        v-if="retweet"
+        :tweet="retweet"
+        v-on:click-card="onClickCard"
+        v-on:click-picture="onClickPictureRetweet"
+      />
       <p class="text-sm text-slate-500 mt-4">
         {{ convertDateToTimeDate(tweet?.created_at) }}
       </p>
     </div>
     <div class="gap-2 py-3 pl-4 border-b">
-      <TextSpan :num="tweet.reply_counts" text="Retweets" />
-      <TextSpan :num="2" text="Quote Tweets" />
+      <TextSpan :num="tweet.reply_counts" text="Replies" />
+      <TextSpan :num="2" text="Retweets" />
       <TextSpan :num="tweet.likes" text="Likes" />
     </div>
     <div class="justify-around items-center border-b py-3">

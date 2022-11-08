@@ -76,14 +76,10 @@ export const patchLikeTweetApi = async (
   return response;
 };
 
-export const getListTweetLikedApi = async (userId: string) => {
-  const body = {
-    user_id: userId,
-  };
-
+export const getListTweetLikedApi = async (headers: Token) => {
   const request = await fetch(`${tweetUrl}/like`, {
-    method: Methods.POST,
-    body: JSON.stringify(body),
+    method: Methods.GET,
+    headers: headers ? authorizationHeader(headers) : undefined,
   });
   const response: Response<Tweet[]> = await request.json();
 
