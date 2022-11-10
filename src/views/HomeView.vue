@@ -35,6 +35,9 @@ const tweetsRequestApi = async () => {
 };
 //#endregion
 
+console.log(import.meta.env.VITE_API_VERSION);
+console.log(import.meta.env.VITE_API_BASE_URL);
+
 //#region ONMOUNT
 onMounted(() => {
   tweetsRequestApi();
