@@ -104,17 +104,17 @@ watch(route, (val) => {
 
 <template>
   <div
-    class="flex-1 overflow-y-scroll flex-col md:ml-[25%] md:mr-[33.5%] md:relative"
+    class="flex-1 overflow-y-scroll flex-col lg:ml-[25%] lg:mr-[33.5%] lg:relative"
   >
     <HeaderBack
       v-on:back-press="handleNavigateBack"
-      class="md:w-[41.5%] md:fixed"
+      class="lg:w-[41.5%] lg:fixed"
     />
     <p v-if="!tweet?.content">Loading...</p>
     <TweetDetail
       v-else
       :tweet="tweet"
-      class="md:pt-15"
+      class="lg:pt-15"
       :retweet="retweetRef"
       v-on:click-card="handleClickRetweet(tweet.reference_id)"
       v-on:click-picture-retweet="

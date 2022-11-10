@@ -89,19 +89,19 @@ const handleNavbar = (dest: string) => {
 
 <template>
   <header
-    class="flex p-3 border-b justify-between md:flex-col md:w-1/4 md:border-r md:gap-5 md:justify-start md:fixed md:h-full md:items-end"
+    class="flex p-3 border-b justify-between lg:flex-col lg:w-1/4 lg:border-r lg:gap-5 lg:justify-start lg:fixed lg:h-full lg:items-end"
   >
-    <div class="flex-1 cursor-pointer md:hidden" @click="handleNavigateUser">
+    <div class="flex-1 cursor-pointer lg:hidden" @click="handleNavigateUser">
       <PictureRounded :text="name" />
     </div>
-    <RouterLink to="/" class="flex flex-1 justify-center md:hidden">
+    <RouterLink to="/" class="flex flex-1 justify-center lg:hidden">
       <IconTwitter class="w-8 fill-blue-400" />
     </RouterLink>
-    <div class="flex-1 justify-end md:hidden">
+    <div class="flex-1 justify-end lg:hidden">
       <ButtonSmallOutline v-if="id" text="Logout" @click="onLogout" />
       <ButtonSmallOutline v-else text="Login" @click="onLogin" />
     </div>
-    <div class="flex-col hidden md:flex md:gap-5 h-full">
+    <div class="flex-col hidden lg:flex lg:gap-5 h-full">
       <RouterLink
         to="/"
         class="hover:bg-blue-100 w-fit p-2 rounded-full transition-colors duration-300"

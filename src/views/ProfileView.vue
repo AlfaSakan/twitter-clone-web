@@ -107,13 +107,13 @@ watch(navbarActive, (val) => {
 
 <template>
   <main
-    class="flex-1 flex-col flex overflow-y-scroll md:ml-[25%] md:mr-[33.5%] md:relative"
+    class="flex-1 flex-col flex overflow-y-scroll lg:ml-[25%] lg:mr-[33.5%] lg:relative"
   >
     <HeaderBack
       v-on:back-press="handleNavigateBack"
       :name="user.name"
       :total-tweets="1000"
-      class="md:fixed md:z-10 md:w-[41.5%]"
+      class="lg:fixed lg:z-10 lg:w-[41.5%]"
     />
     <HeaderProfile :user="user" />
     <div class="border-b">

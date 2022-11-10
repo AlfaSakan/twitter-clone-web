@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { User } from "@/models/userModel";
+import { useUserStore } from "@/stores/userStore";
 import { convertTimeToMonthYear } from "@/utils/convertDate";
+import { storeToRefs } from "pinia";
 import ButtonSmallOutline from "../atoms/ButtonSmallOutline.vue";
 import PictureRoundExtraLarge from "../atoms/PictureRoundExtraLarge.vue";
 import TextIcon from "../atoms/TextIcon.vue";
@@ -11,10 +13,12 @@ export interface Props {
 }
 
 defineProps<Props>();
+
+const { userId } = storeToRefs(useUserStore());
 </script>
 
 <template>
-  <div class="flex-col relative mb-3 md:pt-15">
+  <div class="flex-col relative mb-3 lg:pt-15">
     <div class="bg-slate-300 h-48" />
     <div class="bg-white h-48 px-3">
       <div class="flex-col mt-18">
@@ -34,13 +38,19 @@ defineProps<Props>();
         </div>
       </div>
       <ButtonSmallOutline
+        v-if="user.id === userId"
         text="Edit Profile"
         class="border-slate-400 text-black h-10 ml-auto mt-3"
       />
+      <!-- <ButtonSmallOutline
+        v-else
+        text="Following"
+        class="border-slate-400 text-black h-10 ml-auto mt-3"
+      /> -->
     </div>
     <PictureRoundExtraLarge
       :text="user.name"
-      class="bg-black text-white border-4 border-white absolute top-32 md:top-48 left-3"
+      class="bg-black text-white border-4 border-white absolute top-32 lg:top-48 left-3"
     />
   </div>
 </template>

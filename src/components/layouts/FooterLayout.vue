@@ -9,21 +9,21 @@ import TrendingContainer from "../organisms/TrendingContainer.vue";
 
 <template>
   <div
-    class="justify-between items-center border-y md:w-[33.5%] md:flex-col md:border-l md:border-y-0 md:fixed md:right-0 md:h-full md:items-start md:pl-6 md:pt-2"
+    class="justify-between items-center border-y lg:w-[33.5%] lg:flex-col lg:border-l lg:border-y-0 lg:fixed lg:right-0 lg:h-full lg:items-start lg:pl-6 lg:pt-2"
   >
-    <button class="p-4 md:hidden">
+    <button class="p-4 lg:hidden">
       <IconHome class="w-6" />
     </button>
-    <button class="p-4 md:hidden">
+    <button class="p-4 lg:hidden">
       <IconExplore class="w-6" />
     </button>
-    <button class="p-4 md:hidden">
+    <button class="p-4 lg:hidden">
       <IconNotification class="w-6" />
     </button>
-    <button class="p-4 md:hidden">
+    <button class="p-4 lg:hidden">
       <IconMessage class="w-6" />
     </button>
-    <div class="hidden md:flex flex-col gap-4">
+    <div class="hidden lg:flex flex-col gap-4">
       <SearchComp />
       <TrendingContainer />
     </div>

@@ -44,9 +44,9 @@ onMounted(() => {
 
 <template>
   <main
-    class="flex-1 flex flex-col overflow-y-scroll relative md:overflow-visible md:ml-[25%] md:mr-[33.5%]"
+    class="flex-1 flex flex-col overflow-y-scroll relative lg:overflow-visible lg:ml-[25%] lg:mr-[33.5%]"
   >
-    <div class="hidden md:block md:w-full">
+    <div class="hidden lg:block lg:w-full">
       <div
         class="justify-between px-4 py-3 fixed w-full backdrop-blur-sm bg-white bg-opacity-90"
       >
