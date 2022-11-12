@@ -38,6 +38,14 @@ const tweetRef = ref(props.tweet);
 const handleClickPicture = () => {
   router.push(`/${tweetRef.value.user_id}`);
 };
+
+const handleClickReply = () => {
+  router.push(`/reply/${props.tweet.id}`);
+};
+
+const handleClickRetweet = () => {
+  router.push(`/retweet/${props.tweet.id}`);
+};
 //#endregion
 
 //#region REQUEST
@@ -91,12 +99,12 @@ const handleLikeRequest = async () => {
     </div>
     <div class="gap-2 py-3 pl-4 border-b">
       <TextSpan :num="tweet.reply_counts" text="Replies" />
-      <TextSpan :num="2" text="Retweets" />
+      <TextSpan :num="tweet.retweet_counts" text="Retweets" />
       <TextSpan :num="tweet.likes" text="Likes" />
     </div>
     <div class="justify-around items-center border-b py-3">
-      <IconComment class="w-6" />
-      <IconRetweet class="w-6" />
+      <IconComment class="w-6" @click="handleClickReply" />
+      <IconRetweet class="w-6" @click="handleClickRetweet" />
       <IconLikeFill
         v-if="tweet.is_like"
         class="w-6 fill-red-400"

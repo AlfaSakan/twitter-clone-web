@@ -126,7 +126,7 @@ watch(route, (val) => {
         v-for="reply in replies"
         :key="reply.id"
         :tweet="reply"
-        :replying-to="tweet.User.username"
+        :replying-to="tweet.User?.username || ''"
       />
     </div>
   </div>
