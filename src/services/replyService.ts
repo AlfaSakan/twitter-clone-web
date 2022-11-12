@@ -10,15 +10,15 @@ const replyUrl = `${apiBaseUrl}${apiVersion}/reply`;
 
 type PostReplySchema = {
   content: string;
-  user_id: string;
   type_id: TWEET_TYPE;
   tweet_id: string;
 };
 
-export const postReplyApi = async (body: PostReplySchema) => {
+export const postReplyApi = async (headers: Token, body: PostReplySchema) => {
   const request = await fetch(`${replyUrl}`, {
     method: Methods.POST,
     body: JSON.stringify(body),
+    headers: headers ? authorizationHeader(headers) : undefined,
   });
 
   const response: Response<Tweet> = await request.json();

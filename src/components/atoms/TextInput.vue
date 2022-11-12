@@ -23,7 +23,7 @@ onMounted(() => {
 
 <template>
   <textarea
-    class="w-full focus:outline-none resize-none h-full"
+    class="w-full focus:outline-none resize-none h-56"
     type="text"
     ref="inputRef"
     :placeholder="placeholder"

@@ -147,6 +147,7 @@ onMounted(() => {
 <template>
   <div
     class="flex-col px-4 pt-2 pb-3 border-b w-screen cursor-pointer lg:w-full"
+    v-if="userId || !isContentEmpty"
   >
     <div v-if="retweetRef && isContentEmpty" class="gap-2 items-center ml-7">
       <IconRetweet class="w-3" fill="rgb(100 116 139)" />

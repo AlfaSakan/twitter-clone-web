@@ -22,6 +22,12 @@ const { headersToken } = storeToRefs(useAuthStore());
 const inputTweet = ref("");
 //#endregion
 
+//#region HANDLER
+const handleClickBack = () => {
+  router.back();
+};
+//#endregion
+
 //#region REQUEST
 const createRetweetRequest = async () => {
   try {
@@ -45,9 +51,10 @@ const createRetweetRequest = async () => {
 <template>
   <main class="flex flex-col flex-1">
     <div class="justify-between items-center px-4 py-2">
-      <RouterLink to="/" type="button">
+      <!-- <RouterLink to="/" type="button">
         <IconClose class="w-6" />
-      </RouterLink>
+      </RouterLink> -->
+      <IconClose @click="handleClickBack" class="w-6 cursor-pointer" />
       <ButtonSmall
         @click="createRetweetRequest"
         text="Tweet"
