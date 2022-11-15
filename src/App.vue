@@ -4,6 +4,9 @@ import { watch } from "vue";
 import { RouterView, useRouter } from "vue-router";
 import FooterLayout from "./components/layouts/FooterLayout.vue";
 import PrimaryLayout from "./components/layouts/PrimaryLayout.vue";
+import ConfirmationDelete from "./components/molecules/ConfirmationDelete.vue";
+import ModalDelete from "./components/molecules/ModalDelete.vue";
+import ModalRetweet from "./components/molecules/ModalRetweet.vue";
 import { useAuthStore } from "./stores/authStore";
 import { useUserStore } from "./stores/userStore";
 
@@ -44,4 +47,7 @@ watch(accessToken, (val) => {
   />
   <RouterView />
   <FooterLayout v-if="router.currentRoute.value.name !== 'login'" />
+  <ModalRetweet />
+  <ModalDelete />
+  <ConfirmationDelete />
 </template>

@@ -17,10 +17,15 @@ import { getTweetApi } from "@/services/tweetService";
 import type { User } from "@/models/userModel";
 import TextAtom from "../atoms/TextAtom.vue";
 import { useUserStore } from "@/stores/userStore";
+import IconOptions from "../icons/IconOptions.vue";
+import { useTweetStore } from "@/stores/tweetStore";
 
 export interface Props {
   tweet: Tweet;
   replyingTo?: string;
+  onClickRetweet?: () => void;
+  onClickRemoveRetweet?: () => void;
+  onClickOptions?: () => void;
 }
 
 //#region REQUIRED
@@ -36,6 +41,9 @@ const retweetRef = ref<Tweet>();
 
 const isContentEmpty = ref(!props.tweet.content.trim());
 const isYou = ref(userId.value === tweetRef.value.user_id);
+
+const tweetStore = useTweetStore();
+const { getTweetsStore } = storeToRefs(useTweetStore());
 
 const router = useRouter();
 //#endregion
@@ -73,6 +81,11 @@ const getReferenceTweetRequest = async () => {
   try {
     if (!tweetRef.value.reference_id) return;
 
+    if (getTweetsStore.value.has(tweetRef.value.id)) {
+      retweetRef.value = tweetStore.getTweetById(tweetRef.value.id);
+      return;
+    }
+
     const response = await getTweetApi(
       headersToken.value,
       tweetRef.value.reference_id
@@ -102,10 +115,6 @@ const handleNavigateTweet = async () => {
 
 const handleNavigateReply = () => {
   router.push(`reply/${checkIsContenEmpty("id")()}`);
-};
-
-const handleNavigateAddRetweet = () => {
-  router.push(`retweet/${checkIsContenEmpty("id")()}`);
 };
 
 const handleClickRetweet = (referenceId?: string) => {
@@ -177,6 +186,9 @@ onMounted(() => {
               convertDateToTime(checkIsContenEmpty("created_at")() as number)
             }}
           </p>
+          <div class="ml-auto" @click.stop="onClickOptions">
+            <IconOptions class="w-5" />
+          </div>
         </div>
         <p class="text-sm text-slate-500" v-if="replyingTo">
           Replying to {{ replyingTo }}
@@ -202,12 +214,9 @@ onMounted(() => {
             <IconRetweet
               v-if="isYou && isContentEmpty"
               class="w-4 fill-green-500"
+              @click.stop="onClickRemoveRetweet"
             />
-            <IconRetweet
-              v-else
-              class="w-4"
-              @click.stop="handleNavigateAddRetweet"
-            />
+            <IconRetweet v-else class="w-4" @click.stop="onClickRetweet" />
             <p class="text-xs">{{ checkIsContenEmpty("retweet_counts")() }}</p>
           </div>
           <div class="items-center gap-1">
