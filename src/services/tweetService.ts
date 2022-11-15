@@ -15,8 +15,10 @@ type PostTweetSchema = {
 
 const tweetUrl = `${apiBaseUrl}${apiVersion}/tweet`;
 
-export const getAllTweetsApi = async (headers?: Token) => {
-  const request = await fetch(`${tweetUrl}s`, {
+export const getAllTweetsApi = async (headers?: Token, page?: number) => {
+  const urlFetch = page ? `${tweetUrl}s?page=${page}` : `${tweetUrl}s`;
+
+  const request = await fetch(urlFetch, {
     method: Methods.GET,
     headers: headers ? authorizationHeader(headers) : undefined,
   });
@@ -82,6 +84,18 @@ export const getListTweetLikedApi = async (headers: Token) => {
     headers: headers ? authorizationHeader(headers) : undefined,
   });
   const response: Response<Tweet[]> = await request.json();
+
+  return response;
+};
+
+export const deleteTweetApi = async (headers: Token, tweetId: string) => {
+  const request = await fetch(tweetUrl, {
+    headers: headers ? authorizationHeader(headers) : undefined,
+    method: Methods.DELETE,
+    body: JSON.stringify({ id: tweetId }),
+  });
+
+  const response: Response<string> = await request.json();
 
   return response;
 };

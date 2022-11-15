@@ -3,6 +3,7 @@ import type { Tweet } from "@/models/tweetModel";
 import { getRepliesApi } from "@/services/replyService";
 import { getTweetApi } from "@/services/tweetService";
 import { useAuthStore } from "@/stores/authStore";
+import { useModalStore } from "@/stores/modalStore";
 import { storeToRefs } from "pinia";
 import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -15,6 +16,8 @@ const route = useRoute();
 const router = useRouter();
 
 const { headersToken } = storeToRefs(useAuthStore());
+
+const modalStore = useModalStore();
 
 const tweet = ref({} as Tweet);
 const tweetId = ref(route.params.id as string);
@@ -79,12 +82,23 @@ const handleNavigateBack = () => {
   router.back();
 };
 
-const handleClickRetweet = (referenceId: string) => {
-  router.push(`/tweet/${referenceId}`);
-};
-
 const handleClickPictureRetweet = (userId?: string) => {
   router.push(`/${userId}`);
+};
+
+const handleClickRetweet = (referenceId: string) => {
+  modalStore.toggleRetweet();
+  modalStore.setSelectedId(referenceId);
+};
+
+const handleClickOption = (id: string) => {
+  modalStore.toggleDelete();
+  modalStore.setSelectedId(id);
+};
+
+const handleClickRemoveRetweet = (id: string) => {
+  modalStore.toggleConfirmationDelete();
+  modalStore.setSelectedId(id);
 };
 //#endregion
 
@@ -127,6 +141,9 @@ watch(route, (val) => {
         :key="reply.id"
         :tweet="reply"
         :replying-to="tweet.User?.username || ''"
+        @click-options="handleClickOption(reply.id)"
+        @click-remove-retweet="handleClickRemoveRetweet(reply.id)"
+        @click-retweet="handleClickRetweet(reply.id)"
       />
     </div>
   </div>

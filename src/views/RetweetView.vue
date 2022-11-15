@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import ButtonSmall from "@/components/atoms/ButtonSmall.vue";
 import IconClose from "@/components/icons/IconClose.vue";
+import RetweetCard from "@/components/organisms/RetweetCard.vue";
+import type { Tweet } from "@/models/tweetModel";
 import { postRetweetApi } from "@/services/retweetService";
+import { getTweetApi } from "@/services/tweetService";
 import { useAuthStore } from "@/stores/authStore";
 import { useUserStore } from "@/stores/userStore";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ButtonSmallOutline from "../components/atoms/ButtonSmallOutline.vue";
 import PictureRoundLarge from "../components/atoms/PictureRoundLarge.vue";
@@ -20,6 +23,7 @@ const { user } = storeToRefs(useUserStore());
 const { headersToken } = storeToRefs(useAuthStore());
 
 const inputTweet = ref("");
+const tweetRef = ref<Tweet>();
 //#endregion
 
 //#region HANDLER
@@ -45,6 +49,27 @@ const createRetweetRequest = async () => {
     console.log("ERROR :", error);
   }
 };
+
+const tweetRequestApi = async () => {
+  try {
+    const response = await getTweetApi(
+      headersToken.value,
+      route.params.id as string
+    );
+
+    if (!response.data) return;
+
+    tweetRef.value = response.data;
+  } catch (error) {
+    console.log("ERROR :", error);
+  }
+};
+//#endregion
+
+//#region ONMOUNTED
+onMounted(() => {
+  tweetRequestApi();
+});
 //#endregion
 </script>
 
@@ -69,12 +94,16 @@ const createRetweetRequest = async () => {
         </template>
       </ButtonSmallOutline>
     </div>
-    <div class="pl-16 pr-12 flex-1">
+    <div class="pl-16 pr-12">
       <TextInput
         placeholder="What's happening?"
         v-model="inputTweet"
         :is-focus="true"
       />
+    </div>
+    <div v-if="tweetRef" class="pl-16 pr-4">
+      <!-- <TextAtom :text="tweetRef?.content" /> -->
+      <RetweetCard :tweet="tweetRef" />
     </div>
   </main>
 </template>
