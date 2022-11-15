@@ -72,7 +72,7 @@ const tweetsRequestApi = async (page?: number) => {
 //#endregion
 
 const loopingGetTweets = () => {
-  intervalId.value = setInterval(() => {
+  intervalId.value = window.setInterval(() => {
     if (isLoading.value) return;
     tweetsRequestApi();
   }, 10000);
@@ -87,7 +87,7 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  clearInterval(intervalId.value);
+  window.clearInterval(intervalId.value);
 });
 //#endregion
 
