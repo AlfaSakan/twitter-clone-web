@@ -38,6 +38,7 @@ const tweetMap = ref(new Map<string, Tweet>());
 
 const updateTweetMap = (valMap: Map<string, Tweet>, tweets: Tweet[]) => {
   for (const tw of tweets) {
+    if (!tw.content) continue;
     if (!valMap.has(tw.id)) {
       valMap.set(tw.id, tw);
     }
@@ -49,8 +50,6 @@ const tweetsRequestApi = async (page?: number) => {
   try {
     isLoading.value = true;
     const response = await getAllTweetsApi(headersToken.value, page);
-
-    console.log(response);
 
     if (!response.data) throw response;
 
@@ -110,14 +109,12 @@ const handleClickRemoveRetweet = (id: string) => {
 
 const handleScroll = (e: Event) => {
   const { scrollTop, offsetHeight, scrollHeight } = e.target as HTMLDivElement;
-  // console.log({ scrollTop, offsetHeight, scrollHeight });
 
   if (isLastPage.value || isLoading.value) return;
 
   if (scrollTop + offsetHeight >= scrollHeight - 100) {
     isBottom.value = true;
     tweetsRequestApi((page.value += 1));
-    console.log("bottom!");
     return;
   }
 
