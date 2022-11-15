@@ -38,7 +38,7 @@ const tweetMap = ref(new Map<string, Tweet>());
 
 const updateTweetMap = (valMap: Map<string, Tweet>, tweets: Tweet[]) => {
   for (const tw of tweets) {
-    if (!tw.content) continue;
+    if (!tw.content && !tw.reference_id) continue;
     if (!valMap.has(tw.id)) {
       valMap.set(tw.id, tw);
     }
